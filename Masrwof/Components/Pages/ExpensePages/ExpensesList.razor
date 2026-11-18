@@ -1,0 +1,121 @@
+﻿@page "/expensesList"
+@page "/"
+
+@inject IExpenseService ExpenseService 
+@inject NavigationManager Navigation
+
+<div class="expenses-page" dir="rtl">
+    <div class="page-header">
+        <h2>
+            <RadzenIcon Icon="receipt_long"/>
+            سجل المصروفات
+        </h2>
+        <button class="add-btn" @onclick='() => Navigation.NavigateTo("/expense/add")'>
+            <RadzenIcon Icon="add_circle"/>
+        </button>
+    </div>
+    <div class="total-card">
+        <p>
+            <RadzenIcon Icon="payments" />
+            إجمالي المصروفات
+        </p>
+        <h3>@ExpenseService.GetTotalExpenses().ToString("C2",CultureInfo.GetCultureInfo("ar-LY"))</h3>
+    </div>
+    <div class="expenses-card">
+        @if (expenses == null || !expenses.Any())
+        {
+            <p class="empty-message">
+                <RadzenIcon Icon="receipt"/>
+                لا توجد مصروفات مسجلة حاليا
+            </p>
+        } else {
+            <div class="table-box">
+                <table class="expenses-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>العنوان</th>
+                            <th>الفئة</th>
+                            <th>المبلغ</th>
+                            <th>الاجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in expenses)
+                        {
+                            <tr>
+                                <td>@item.Date.ToString("yyyy-M-dd")</td>
+                                <td>@item.Name</td>
+                                <td><span class="category">@item.Category</span></td>
+                                <td class="amount">@item.Amount.ToString("C2", CultureInfo.GetCultureInfo("ar-LY"))</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="view-btn" @onclick='() => Navigation.NavigateTo($"/expense/view/{item.Id}")'>
+                                            <RadzenIcon Icon="visibility"/>
+                                            عرض
+                                        </button>
+
+                                        <button class="edit-btn" @onclick='() => Navigation.NavigateTo($"/expense/edit/{item.Id}")'>
+                                            <RadzenIcon Icon="edit"/>
+                                            تعديل
+                                        </button>
+
+                                        <button class="delete-btn" @onclick="() => DeleteExpense(item.Id)">
+                                            <RadzenIcon Icon="delete"/>
+                                            حذف
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+@if (expenseToDelete.HasValue)
+{
+    <div class="modal-bg">
+        <div class="delete-modal" dir="rtl">
+            <div class="modal-header">
+                <h5>تاكيد الحذف</h5>
+                <button class="close-btn" @onclick="CancelDelete">x</button>
+            </div>
+            <div class="modal-body">
+                هل انت متأكد من حذف هذا المصروف؟
+            </div>
+            <div class="modal-footer">
+                <button class="delete-btn" @onclick="ConfirmDelete">حذف</button>
+                <button class="cancel-btn" @onclick="CancelDelete">تراجع</button>
+            </div>
+        </div>
+    </div>
+}
+@code{
+    private List<Expense> expenses = new List<Expense>();
+    private Guid? expenseToDelete;
+
+    protected override void OnInitialized()
+    {
+        expenses = ExpenseService.GetAllExpenses();
+    }
+    private void DeleteExpense(Guid id)
+    {
+        expenseToDelete = id;
+    }
+    private void ConfirmDelete()
+    {
+        if (!expenseToDelete.HasValue)
+        {
+            return;
+        }
+        ExpenseService.DeleteExpense(expenseToDelete.Value);
+        expenses = ExpenseService.GetAllExpenses();
+        expenseToDelete = null;
+    }
+    private void CancelDelete()
+    {
+        expenseToDelete = null;
+    }
+}
