@@ -1,0 +1,52 @@
+﻿@page "/expense/add"
+@using Radzen.Blazor.Rendering
+
+@inject IExpenseService ExpenseService
+@inject NavigationManager Navigation
+
+<div class="form-container">
+    <EditForm Model="@expense" OnInvalidSubmit="HandleSubmit">
+        <DataAnnotationsValidator/>
+        <div class="form-group">
+            <label class="form-label">المصروف</label>
+            <input type="text" class="form-input" @bind-value="expense.Name" required/>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">المبلغ (د.ل)</label>
+            <input type="number" step="0.01" class="form-input" @bind-value="expense.Amount" required />
+        </div>
+         
+        <div class="form-group">
+            <label class="form-label">الفئة</label>
+            <select class="form-input" @bind="expense.Category">
+                <option value="طعام">طعام</option>
+                <option value="مواصلات">مواصلات</option>
+                <option value="فواتير">فواتير</option>
+                <option value="ترفيه">ترفيه</option>
+                <option value="صحة">صحة وعلاج</option>
+                <option value="أخرى">أخرى</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">التاريخ</label>
+            <input type="date" class="form-input" @bind-value="expense.Date" required />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">إضافة</button>
+            <button type="button" class="btn" @onclick="GoBack">إلغاء</button>
+        </div>
+   </EditForm>
+</div>
+@code{
+    private Expense expense = new() { Date = DateTime.Now, Category = "طعام" };
+    private void HandleSubmit()
+    {
+        ExpenseService.AddExpense(expense);
+        GoBack();
+    }
+    private void GoBack() => Navigation.NavigateTo("/expenseList");
+    
+}
