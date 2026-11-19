@@ -1,1 +1,54 @@
-﻿
+﻿@page "/expense/edit/{id:guid}"
+
+@inject IExpenseService ExpenseService
+@inject NavigationManager Navigation
+
+<div class="expense-edit-page">
+    <div class="expense-form-container">
+        <EditForm Model="@expense" OnInvalidSubmit="HandleSubmit">
+            <DataAnnotationsValidator/>
+            <div class="expense-form-group">
+                <label class="expense-form-label">المصروف</label>
+                <input type="text" class="expense-form-input" @bind-value="expense.Name" required />
+            </div>
+            <div class="expense-form-group">
+                <label class="expense-form-label">المبلغ (د.ل)</label>
+                <input type="number" step="0.01" class="expense-form-input" @bind-value="expense.Amount" required />
+            </div>
+            <div class="expense-form-group">
+                <label class="expense-form-label">الفئة</label>
+                <select class="expense-form-input" @bind="expense.Category">
+                    <option value="طعام">طعام</option>
+                    <option value="مواصلات">مواصلات</option>
+                    <option value="فواتير">فواتير</option>
+                    <option value="ترفيه">ترفيه</option>
+                    <option value="صحة">صحة وعلاج</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+            </div>
+            <div class="expense-form-group">
+                <label class="expense-form-label">التاريخ</label>
+                <input type="date" class="expense-form-input" @bind-value="expense.Date" />
+            </div>
+            <div class="expense-actions">
+                <button type="submit" class="expense-btn expense-btn-primary">حفظ</button>
+                <button type="button" class="expense-btn" @onclick="GoBack">إلغاء</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+@code{
+    [Parameter]public Guid Id { get; set; }
+    private Expense expense = new();
+    protected override void OnInitialized()
+    {
+        expense = ExpenseService.GetExpenseById(Id) ?? new();
+        if (expense.Id == Guid.Empty) Navigation.NavigateTo("/expensesList");
+    }
+    private void HandleSubmit()
+    {
+        ExpenseService.UpdateExpense(expense);
+        GoBack();
+    }
+    private void GoBack() => Navigation.NavigateTo("/expensesList");
+}
