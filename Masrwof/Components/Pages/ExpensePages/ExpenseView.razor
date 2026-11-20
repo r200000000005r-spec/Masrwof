@@ -1,0 +1,46 @@
+﻿@page "/expense/view/{id:guid}"
+
+@inject IExpenseService ExpenseService
+@inject NavigationManager Navigation
+
+<div class="form-container">
+    <div class="form-group">
+        <label class="form-label">المصروف</label>
+        <input type="text" class="form-input" value="@expense.Name" disabled />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">المبلغ (د.ل)</label>
+        <input type="number" class="form-input" value="@expense.Amount" disabled />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">الفئة</label>
+        <input type="text" class="form-input" value="@expense.Category" disabled />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">التاريخ</label>
+        <input type="date" class="form-input" value="@expense.Date.ToString("yyyy-MM-dd")" disabled />
+    </div>
+
+    <div class="summary">
+        <span>إجمالي القيمة : </span>
+        <strong>@expense.Amount.ToString("C2",CultureInfo.GetCultureInfo("ar-LY"))</strong>
+    </div>
+    <div class="form-actions">
+        <button type="button" class="btn" @onclick="GoBack">رجوع</button>
+    </div>
+</div>
+
+@code{
+    [Parameter] public Guid Id { get; set; }
+    private Expense expense = new();
+    protected override void OnInitialized()
+    {
+        expense = ExpenseService.GetExpenseById(Id) ?? new();
+        if (expense.Id == Guid.Empty) Navigation.NavigateTo("/expenseList");
+    }
+    private void GoBack() => Navigation.NavigateTo("/expenseList");
+}
+
