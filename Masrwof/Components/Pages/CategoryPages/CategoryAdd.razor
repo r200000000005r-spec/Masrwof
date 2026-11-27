@@ -1,0 +1,27 @@
+﻿@page "/category/add"
+
+@inject ICategoryService CategoryService
+@inject NavigationManager Navigation
+
+<div class="category-form-container">
+    <EditForm Model="@category" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator/>
+        <div class="category-form-group">
+            <label class="category-form-label">اسم الفئة</label>
+            <input type="text" class="category-form-input" @bind-value="category.Name" required/>
+        </div>
+        <div class="category-form-actions">
+            <button type="submit" class="category-btn category-btn-primary">إضافة</button>
+            <button type="button" class="category-btn" @onclick="GoBack">إلغاء</button>
+        </div>
+    </EditForm>
+</div>
+@code{
+    private Category category = new();
+    private void HandleSubmit()
+    {
+        CategoryService.AddCategory(category);
+        GoBack();
+    }
+    private void GoBack() => Navigation.NavigateTo("/categoryList");
+}

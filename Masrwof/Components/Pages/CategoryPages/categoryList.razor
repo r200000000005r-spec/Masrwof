@@ -1,1 +1,108 @@
-﻿
+﻿@page "/categoryList"
+
+@inject ICategoryService CategoryService
+@inject NavigationManager Navigation
+
+<div class="categories-page" dir="rtl">
+    <div class="category-header">
+        <h2>
+            <RadzenIcon Icon="category"/>
+            سجل الفئات
+        </h2>
+        <button class="category-add-btn" @onclick='() => Navigation.NavigateTo("/category/add")'>
+            <RadzenIcon Icon="add_circle"/>
+            إضافة فئة
+        </button>
+    </div>
+    <div class="categories-card">
+        @if (categories == null || !categories.Any())
+        {
+            <p class="category-empty-message">
+                <RadzenIcon Icon="category"/>
+                لا توجد فئات مسجلة حاليا
+            </p>
+        }
+        else
+        {
+            <div class="categories-table-box">
+                <table class="category-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الفئة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in categories)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="category-name">@item.Name</span>
+                                </td>
+                                <td>
+                                    <div class="category-actions">
+                                        <button class="category-edit-btn" @onclick='() => Navigation.NavigateTo($"/category/edit/{item.Id}")'>
+                                            <RadzenIcon Icon="edit"/>
+                                            تعديل
+                                        </button>
+                                        <button class="category-delete-btn"@onclick="()=> DeleteCategory(item.Id)">
+                                            <RadzenIcon Icon="delete"/>
+                                            حذف
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+@if (categoryToDelete.HasValue)
+{
+    <div class="category-modal-bg">
+        <div class="category-delete-modal" dir="rtl">
+            <div class="category-modal-header">
+                <h5>تأكيد الحذف</h5>
+                <button class="category-close-btn" @onclick="CancelDelete">X</button>
+            </div>
+
+            <div class="category-modal-body">
+                هل انت متأكد من حذف هذه الفئة؟
+            </div>
+
+            <div class="category-modal-footer">
+                <button class="category-delete-btn" @onclick="ConfirmDelete">حذف</button>
+                <button class="category-cancel-btn" @onclick="CancelDelete">إلغاء</button>
+            </div>
+        </div>
+    </div>
+}
+@code{
+    private List<Category> categories = new List<Category>();
+    private Guid? categoryToDelete;
+    protected override void OnInitialized()
+    {
+        categories = CategoryService.GetAllCategories();
+    }
+
+    private void DeleteCategory(Guid id)
+    {
+        categoryToDelete=id;
+    }
+    private void ConfirmDelete()
+    {
+        if (!categoryToDelete.HasValue)
+        {
+            return;
+        }
+        CategoryService.DeleteCategory(categoryToDelete.Value);
+        categories = CategoryService.GetAllCategories();
+        categoryToDelete = null;
+    }
+    private void CancelDelete()
+    {
+        categoryToDelete = null;
+    }
+}

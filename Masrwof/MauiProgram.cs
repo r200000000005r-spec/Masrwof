@@ -26,16 +26,17 @@ namespace Masrwof
     		builder.Logging.AddDebug();
 #endif
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "Masrwof.db");
+         //  File.Delete(dbPath);
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"),ServiceLifetime.Scoped);
             builder.Services.AddScoped<IExpenseService, ExpenseService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             var app = builder.Build();
             using (var scope =app.Services.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var context =scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 context.Database.EnsureCreated();
             }
-            return app;
+                return app;
         }
     }
 }

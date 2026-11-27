@@ -34,10 +34,14 @@
 </div>
 
 @code{
+    //[Parameter]: معناها إن المتغير يستقبل قيمة من خارج الصفحة، وفي حالتنا يستقبل القيمة الموجودة في رابط الصفحة.
     [Parameter] public Guid Id { get; set; }
     private Expense expense = new();
+    //override: معناها إننا نعيدوا كتابة تنفيذ دالة موجودة أصلاً في الكلاس الأساسي.
+    //OnInitialized(): يتم تنفيذها تلقائياً عند تهيئة الصفحة لأول مرة.
     protected override void OnInitialized()
     {
+        //يتحقق هل النتيجة تساوي null أم لا.
         expense = ExpenseService.GetExpenseById(Id) ?? new();
         if (expense.Id == Guid.Empty) Navigation.NavigateTo("/expensesList");
     }
