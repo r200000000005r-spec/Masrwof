@@ -25,7 +25,7 @@
     </div>
 
     <div class="summary">
-        <span>إجمالي القيمة : </span>
+        <span>إجمالي القيمة </span>
         <strong>@expense.Amount.ToString("C2",CultureInfo.GetCultureInfo("ar-LY"))</strong>
     </div>
     <div class="form-actions">
@@ -39,8 +39,8 @@
     protected override void OnInitialized()
     {
         expense = ExpenseService.GetExpenseById(Id) ?? new();
-        if (expense.Id == Guid.Empty) Navigation.NavigateTo("/expenseList");
+        if (expense.Id == Guid.Empty) Navigation.NavigateTo("/expensesList");
     }
-    private void GoBack() => Navigation.NavigateTo("/expenseList");
+    private void GoBack() => Navigation.NavigateTo("/expensesList");
 }
 

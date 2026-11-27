@@ -28,6 +28,7 @@ namespace Masrwof
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "Masrwof.db");
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"),ServiceLifetime.Scoped);
             builder.Services.AddScoped<IExpenseService, ExpenseService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             var app = builder.Build();
             using (var scope =app.Services.CreateScope())
             {

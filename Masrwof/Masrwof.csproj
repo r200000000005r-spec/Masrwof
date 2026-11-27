@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0-android</TargetFrameworks>
+		<TargetFrameworks>net10.0-windows10.0.19041.0;net10.0-android</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
 
@@ -75,7 +75,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
